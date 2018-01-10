@@ -42,7 +42,7 @@
 	name = "pickaxe"
 	desc = "It's a pickaxe. You hit rocks with it. And people with it too if you feel like."
 	icon = 'icons/obj/items.dmi'
-	flags = CONDUCT
+	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	slot_flags = SLOT_BELT
 	force = 15.0
 	throwforce = 4.0
@@ -146,7 +146,7 @@
 	desc = "A large tool for digging and moving dirt."
 	icon = 'icons/obj/items.dmi'
 	icon_state = "shovel"
-	flags = CONDUCT
+	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	slot_flags = SLOT_BELT
 	force = 8.0
 	throwforce = 4.0

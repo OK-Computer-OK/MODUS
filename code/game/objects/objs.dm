@@ -1,5 +1,8 @@
 /obj
 	layer = OBJ_LAYER
+
+	var/obj_flags
+
 	//Used to store information about the contents of the object.
 	var/list/matter
 	var/w_class // Size of the object.
@@ -199,5 +202,9 @@
 				to_chat(user, "<span class='notice'>You [anchored? "un" : ""]secured \the [src]!</span>")
 				anchored = !anchored
 				update_icon()
+	if(obj_flags & OBJ_FLAG_ANCHORABLE)
+		if(isWrench(O))
+			wrench_floor_bolts(user)
+			update_icon()
 			return
 	return ..()

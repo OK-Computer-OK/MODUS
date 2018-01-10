@@ -91,6 +91,7 @@
 /area/ship/scrap/maintenance/lower
 	name = "\improper Lower Deck Maintenance Compartments"
 	icon_state = "sub_maint_aft"
+	area_flags = AREA_FLAG_RAD_SHIELDED
 
 /area/ship/scrap/maintenance/storage
 	name = "\improper Tools Storage"

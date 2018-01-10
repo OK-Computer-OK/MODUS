@@ -125,6 +125,12 @@
 		if (3)
 			burn_damage = 3
 	burn_damage *= robotic/burn_mod //ignore burn mod for EMP damage
+
+	var/power = 4 - severity //stupid reverse severity
+	for(var/obj/item/I in implants)
+		if(I.obj_flags & OBJ_FLAG_CONDUCTIBLE)
+			burn_damage += I.w_class * rand(power, 3*power)
+
 	if(burn_damage)
 		take_damage(0, burn_damage)
 
@@ -531,7 +537,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 */
 /obj/item/organ/external/proc/update_germs()
 
-	if(robotic >= ORGAN_ROBOT || (owner.species && owner.species.flags & IS_PLANT)) //Robotic limbs shouldn't be infected, nor should nonexistant limbs.
+	if(robotic >= ORGAN_ROBOT || (owner.species && owner.species.species_flags & SPECIES_FLAG_IS_PLANT)) //Robotic limbs shouldn't be infected, nor should nonexistant limbs.
 		germ_level = 0
 		return
 
@@ -1035,7 +1041,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 /obj/item/organ/external/proc/embed(var/obj/item/weapon/W, var/silent = 0, var/supplied_message, var/datum/wound/supplied_wound)
 	if(!owner || loc != owner)
 		return
-	if(species.flags & NO_EMBED)
+	if(species.species_flags & SPECIES_FLAG_NO_EMBED)
 		return
 	if(!silent)
 		if(supplied_message)

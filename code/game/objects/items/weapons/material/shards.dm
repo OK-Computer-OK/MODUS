@@ -7,8 +7,8 @@
 	icon_state = "large"
 	randpixel = 8
 	sharp = 1
-	sharpness = 25
-	force = 15
+	sharpness = 5
+	force = 8
 	//edge = 1
 	w_class = ITEM_SIZE_SMALL
 	//force_divisor = 0.2 // 6 with hardness 30 (glass)
@@ -67,8 +67,7 @@
 		playsound(src.loc, 'sound/effects/glass_step.ogg', 50, 1) // not sure how to handle metal shards with sounds
 		if(ishuman(M))
 			var/mob/living/carbon/human/H = M
-
-			if(H.species.siemens_coefficient<0.5 || (H.species.flags & NO_EMBED)) //Thick skin.
+			if(H.species.siemens_coefficient<0.5 || (H.species.species_flags & (SPECIES_FLAG_NO_EMBED|SPECIES_FLAG_NO_MINOR_CUT))) //Thick skin.
 				return
 
 			if( H.shoes || ( H.wear_suit && (H.wear_suit.body_parts_covered & FEET) ) )

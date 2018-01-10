@@ -13,7 +13,7 @@
 	possible_transfer_amounts = "5;10;15;25;30;60"
 	volume = 60
 	w_class = ITEM_SIZE_SMALL
-	flags = OPENCONTAINER
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 	unacidable = 1 //glass doesn't dissolve in acid
 
 
@@ -46,25 +46,32 @@
 		..()
 		base_name = name
 
-	examine(var/mob/user)
-		if(!..(user, 2))
-			return
-		if(reagents && reagents.reagent_list.len)
-			to_chat(user, "<span class='notice'>It contains [reagents.total_volume] units of liquid.</span>")
-		else
-			to_chat(user, "<span class='notice'>It is empty.</span>")
-		if(!is_open_container())
-			to_chat(user, "<span class='notice'>Airtight lid seals it completely.</span>")
+/obj/item/weapon/reagent_containers/glass/examine(var/mob/user)
+	if(!..(user, 2))
+		return
+	if(reagents && reagents.reagent_list.len)
+		to_chat(user, "<span class='notice'>It contains [reagents.total_volume] units of liquid.</span>")
+	else
+		to_chat(user, "<span class='notice'>It is empty.</span>")
+	if(!is_open_container())
+		to_chat(user, "<span class='notice'>The airtight lid seals it completely.</span>")
 
-	attack_self()
-		..()
-		if(is_open_container())
-			to_chat(usr, "<span class = 'notice'>You put the lid on \the [src].</span>")
-			flags ^= OPENCONTAINER
-		else
-			to_chat(usr, "<span class = 'notice'>You take the lid off \the [src].</span>")
-			flags |= OPENCONTAINER
-		update_icon()
+/obj/item/weapon/reagent_containers/glass/attack_self()
+	..()
+	if(is_open_container())
+		to_chat(usr, "<span class = 'notice'>You put the lid on \the [src].</span>")
+		atom_flags ^= ATOM_FLAG_OPEN_CONTAINER
+	else
+		to_chat(usr, "<span class = 'notice'>You take the lid off \the [src].</span>")
+		atom_flags |= ATOM_FLAG_OPEN_CONTAINER
+	update_icon()
+
+/obj/item/weapon/reagent_containers/glass/attack(mob/M as mob, mob/user as mob, def_zone)
+	if(force && !(item_flags & ITEM_FLAG_NO_BLUDGEON) && user.a_intent == I_HURT)
+		return	..()
+	if(standard_feed_mob(user, M))
+		return
+	return 0
 
 	do_surgery(mob/living/carbon/M, mob/living/user)
 		if(user.a_intent != I_HELP) //in case it is ever used as a surgery tool
@@ -153,7 +160,7 @@
 	volume = 120
 	amount_per_transfer_from_this = 10
 	possible_transfer_amounts = "5;10;15;25;30;60;120"
-	flags = OPENCONTAINER
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 
 /obj/item/weapon/reagent_containers/glass/beaker/noreact
 	name = "cryostasis beaker"
@@ -163,7 +170,8 @@
 	matter = list("glass" = 500)
 	volume = 60
 	amount_per_transfer_from_this = 10
-	flags = OPENCONTAINER | NOREACT
+	atom_flags = ATOM_FLAG_NO_REACT
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 
 /obj/item/weapon/reagent_containers/glass/beaker/bluespace
 	name = "bluespace beaker"
@@ -173,8 +181,8 @@
 	matter = list("glass" = 5000)
 	volume = 300
 	amount_per_transfer_from_this = 10
-	possible_transfer_amounts = "5;10;15;25;30;60;120;300"
-	flags = OPENCONTAINER
+	possible_transfer_amounts = "5;10;15;25;30;60;120;150;200;250;300"
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 
 /obj/item/weapon/reagent_containers/glass/beaker/vial
 	name = "vial"
@@ -185,8 +193,8 @@
 	volume = 30
 	w_class = ITEM_SIZE_TINY //half the volume of a bottle, half the size
 	amount_per_transfer_from_this = 10
-	possible_transfer_amounts = "5;10;15;25"
-	flags = OPENCONTAINER
+	possible_transfer_amounts = "5;10;15;30"
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 
 /obj/item/weapon/reagent_containers/glass/beaker/cryoxadone
 	New()
@@ -210,9 +218,9 @@
 	matter = list(DEFAULT_WALL_MATERIAL = 200)
 	w_class = ITEM_SIZE_NORMAL
 	amount_per_transfer_from_this = 20
-	possible_transfer_amounts = "10;20;30;60;120"
-	volume = 120
-	flags = OPENCONTAINER
+	possible_transfer_amounts = "10;20;30;60;120;150;180"
+	volume = 180
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 	unacidable = 0
 
 /obj/item/weapon/reagent_containers/glass/bucket/attackby(var/obj/D, mob/user as mob)

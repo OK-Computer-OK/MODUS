@@ -54,7 +54,7 @@
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "knife_kitchen"
 	desc = "A general purpose Chef's Knife made by SpaceCook Incorporated. Guaranteed to stay sharp for years to come."
-	flags = CONDUCT
+	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	sharp = 1
 	sharpness = 25
 	force_divisor = 0.15 // 9 when wielded with hardness 60 (steel)

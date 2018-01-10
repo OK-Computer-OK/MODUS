@@ -10,7 +10,7 @@
 	layer = BELOW_OBJ_LAYER
 	anchored = 1
 	density = 1
-	flags = OBJ_ANCHORABLE
+	obj_flags = OBJ_FLAG_ANCHORABLE
 	clicksound = "button"
 	clickvol = 40
 
@@ -200,6 +200,10 @@
 	else if(istype(W, /obj/item/device/multitool)||istype(W, /obj/item/weapon/wirecutters))
 		if(src.panel_open)
 			attack_hand(user)
+		return
+	else if((obj_flags & OBJ_FLAG_ANCHORABLE) && isWrench(W))
+		wrench_floor_bolts(user)
+		power_change()
 		return
 	else if(istype(W, /obj/item/weapon/coin) && premium.len > 0)
 		user.drop_item()

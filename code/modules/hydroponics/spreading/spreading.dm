@@ -42,8 +42,8 @@
 	icon_state = "bush4-1"
 	plane = OBJ_PLANE
 	layer = OBJ_LAYER
-	pass_flags = PASSTABLE
-	mouse_opacity = 2
+	pass_flags = PASS_FLAG_TABLE
+	mouse_opacity = 1
 
 	var/health = 10
 	var/max_health = 100

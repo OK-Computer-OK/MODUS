@@ -8,7 +8,7 @@
 	name = "multitool"
 	desc = "Used for pulsing wires to test which to cut. Not recommended by doctors."
 	icon_state = "multitool"
-	flags = CONDUCT
+	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	force = 5.0
 	w_class = ITEM_SIZE_SMALL
 	throwforce = 5.0

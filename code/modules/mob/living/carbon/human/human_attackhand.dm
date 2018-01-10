@@ -93,6 +93,29 @@
 					to_chat(src, "<span class='notice'>You feel a breath of fresh air enter your lungs. It feels good.</span>")
 					if(prob(15))
 						resuscitate()
+					if(!H.check_has_mouth())
+						to_chat(H, "<span class='warning'>You don't have a mouth, you cannot do mouth-to-mouth resustication!</span>")
+						return
+					if(!check_has_mouth())
+						to_chat(H, "<span class='warning'>They don't have a mouth, you cannot do mouth-to-mouth resustication!</span>")
+						return
+					if((H.head && (H.head.body_parts_covered & FACE)) || (H.wear_mask && (H.wear_mask.body_parts_covered & FACE)))
+						to_chat(H, "<span class='warning'>You need to remove your mouth covering for mouth-to-mouth resustication!</span>")
+						return 0
+					if((head && (head.body_parts_covered & FACE)) || (wear_mask && (wear_mask.body_parts_covered & FACE)))
+						to_chat(H, "<span class='warning'>You need to remove \the [src]'s mouth covering for mouth-to-mouth resustication!</span>")
+						return 0
+					if (!H.internal_organs_by_name[H.species.breathing_organ])
+						to_chat(H, "<span class='danger'>You need lungs for mouth-to-mouth resustication!</span>")
+						return
+					if(!need_breathe())
+						return
+					var/obj/item/organ/internal/lungs/L = internal_organs_by_name[species.breathing_organ]
+					if(L)
+						var/datum/gas_mixture/breath = H.get_breath_from_environment()
+						var/fail = L.handle_breath(breath, 1)
+						if(!fail)
+							to_chat(src, "<span class='notice'>You feel a breath of fresh air enter your lungs. It feels good.</span>")
 
 			else if(!(M == src && apply_pressure(M, M.zone_sel.selecting)))
 				help_shake_act(M)
@@ -161,7 +184,7 @@
 				// Someone got a good grip on them, they won't be able to do much damage
 				rand_damage = max(1, rand_damage - 2)
 
-			if(src.grabbed_by.len || src.buckled || !src.canmove || src==H)
+			if(src.grabbed_by.len || src.buckled || !src.canmove || src==H || H.species.species_flags & SPECIES_FLAG_NO_BLOCK)
 				accurate = 1 // certain circumstances make it impossible for us to evade punches
 				rand_damage = 3
 

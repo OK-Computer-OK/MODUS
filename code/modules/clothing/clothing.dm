@@ -184,6 +184,12 @@ BLIND     // can't see anything
 		)
 	blood_overlay_type = "bloodyhands"
 
+/obj/item/clothing/gloves/Initialize()
+	if(item_flags & ITEM_FLAG_PREMODIFIED)
+		cut_fingertops()
+
+	. = ..()
+
 /obj/item/clothing/gloves/update_clothing_icon()
 	if (ismob(src.loc))
 		var/mob/M = src.loc

@@ -77,8 +77,8 @@
 	amount_per_transfer_from_this = 10
 	possible_transfer_amounts = "10;25;50;100"
 	initial_capacity = 50000
-	initial_reagents = "{'water':1}"
-	flags = OBJ_CLIMBABLE
+	initial_reagent_types = list(/datum/reagent/water = 1)
+	atom_flags = ATOM_FLAG_CLIMBABLE
 
 /obj/structure/reagent_dispensers/fueltank
 	name = "fueltank"
@@ -88,8 +88,8 @@
 	amount_per_transfer_from_this = 10
 	var/modded = 0
 	var/obj/item/device/assembly_holder/rig = null
-	initial_reagents = "{'fuel':1}"
-	flags = OBJ_CLIMBABLE
+	initial_reagent_types = list(/datum/reagent/fuel = 1)
+	atom_flags = ATOM_FLAG_CLIMBABLE
 
 /obj/structure/reagent_dispensers/fueltank/examine(mob/user)
 	if(!..(user, 2))
@@ -239,8 +239,8 @@
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "beertankTEMP"
 	amount_per_transfer_from_this = 10
-	initial_reagents = "{'beer':1}"
-	flags = OBJ_CLIMBABLE
+	initial_reagent_types = list(/datum/reagent/ethanol/beer = 1)
+	atom_flags = ATOM_FLAG_CLIMBABLE
 
 /obj/structure/reagent_dispensers/virusfood
 	name = "Virus Food Dispenser"

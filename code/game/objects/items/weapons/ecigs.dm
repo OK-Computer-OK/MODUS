@@ -119,7 +119,7 @@
 	icon = 'icons/obj/ecig.dmi'
 	icon_state = "ecartridge"
 	volume = 20
-	flags = OPENCONTAINER
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 
 /obj/item/weapon/reagent_containers/ecig_cartridge/New()
 	create_reagents(volume)

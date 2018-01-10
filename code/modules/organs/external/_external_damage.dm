@@ -46,15 +46,25 @@
 	if(brute_dam > min_broken_damage && prob(brute_dam + brute * (1+blunt)) ) //blunt damage is gud at fracturing
 		fracture()
 
-	if(used_weapon)
-		add_autopsy_data("[used_weapon]", brute + burn)
-	var/can_cut = (prob(brute*2) || sharp) && (robotic < ORGAN_ROBOT)
-	var/spillover = 0
-	var/pure_brute = brute
-	if(!is_damageable(brute + burn))
-		spillover =  brute_dam + burn_dam + brute - max_damage
-		if(spillover > 0)
-			brute -= spillover
+	// If the limbs can break, make sure we don't exceed the maximum damage a limb can take before breaking
+	var/datum/wound/created_wound
+	var/block_cut = !(brute > 15 || !(species.species_flags & SPECIES_FLAG_NO_MINOR_CUT))
+
+	if(brute)
+		var/to_create = BRUISE
+		if(can_cut)
+			if(!block_cut)
+				to_create = CUT
+			//need to check sharp again here so that blunt damage that was strong enough to break skin doesn't give puncture wounds
+			if(sharp && !edge)
+				to_create = PIERCE
+		created_wound = createwound(to_create, brute)
+
+	if(burn)
+		if(laser)
+			createwound(LASER, burn)
+			if(prob(40))
+				owner.IgniteMob()
 		else
 			spillover = brute_dam + burn_dam + brute + burn - max_damage
 			if(spillover > 0)
@@ -152,10 +162,10 @@
 
 // Geneloss/cloneloss.
 /obj/item/organ/external/proc/get_genetic_damage()
-	return ((species.flags & NO_SCAN) || robotic >= ORGAN_ROBOT) ? 0 : genetic_degradation
+	return ((species && (species.species_flags & SPECIES_FLAG_NO_SCAN)) || robotic >= ORGAN_ROBOT) ? 0 : genetic_degradation
 
 /obj/item/organ/external/proc/remove_genetic_damage(var/amount)
-	if((species.flags & NO_SCAN) || robotic >= ORGAN_ROBOT)
+	if((species.species_flags & SPECIES_FLAG_NO_SCAN) || robotic >= ORGAN_ROBOT)
 		genetic_degradation = 0
 		status &= ~ORGAN_MUTATED
 		return
@@ -168,7 +178,7 @@
 	return -(genetic_degradation - last_gene_dam)
 
 /obj/item/organ/external/proc/add_genetic_damage(var/amount)
-	if((species.flags & NO_SCAN) || robotic >= ORGAN_ROBOT)
+	if((species.species_flags & SPECIES_FLAG_NO_SCAN) || robotic >= ORGAN_ROBOT)
 		genetic_degradation = 0
 		status &= ~ORGAN_MUTATED
 		return

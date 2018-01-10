@@ -42,7 +42,7 @@
 /obj/item/clothing/head/helmet/space/vox
 	armor = list(melee = 60, bullet = 50, laser = 40, energy = 15, bomb = 30, bio = 30, rad = 30)
 	siemens_coefficient = 0.6
-	item_flags = STOPPRESSUREDAMAGE
+	item_flags = ITEM_FLAG_STOPPRESSUREDAMAGE
 	flags_inv = 0
 
 /obj/item/clothing/head/helmet/space/vox/pressure
@@ -120,7 +120,7 @@
 
 /obj/item/clothing/shoes/magboots/vox/attack_self(mob/user)
 	if(src.magpulse)
-		item_flags &= ~NOSLIP
+		item_flags &= ~ITEM_FLAG_NOSLIP
 		magpulse = 0
 		canremove = 1
 		to_chat(user, "You relax your deathgrip on the flooring.")
@@ -133,7 +133,7 @@
 			to_chat(user, "You will have to put on the [src] before you can do that.")
 			return
 
-		item_flags |= NOSLIP
+		item_flags |= ITEM_FLAG_NOSLIP
 		magpulse = 1
 		canremove = 0	//kinda hard to take off magclaws when you are gripping them tightly.
 		to_chat(user, "You dig your claws deeply into the flooring, bracing yourself.")
@@ -145,7 +145,7 @@
 	..()
 	if(src.magpulse)
 		user.visible_message("The [src] go limp as they are removed from [usr]'s feet.", "The [src] go limp as they are removed from your feet.")
-		item_flags &= ~NOSLIP
+		item_flags &= ~ITEM_FLAG_NOSLIP
 		magpulse = 0
 		canremove = 1
 

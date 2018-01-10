@@ -132,7 +132,7 @@
 	var/has_fine_manipulation = 1 // Can use small items.
 	var/siemens_coefficient = 1   // The lower, the thicker the skin and better the insulation.
 	var/darksight = 2             // Native darksight distance.
-	var/flags = 0                 // Various specific features.
+	var/species_flags = 0         // Various specific features.
 	var/appearance_flags = 0      // Appearance/display related features.
 	var/spawn_flags = 0           // Flags that specify who can spawn as this species
 	var/slowdown = 0              // Passive movement speed malus (or boost, if negative)
@@ -399,3 +399,72 @@
 //Mostly for toasters
 /datum/species/proc/handle_limbs_setup(var/mob/living/carbon/human/H)
 	return FALSE
+
+// Impliments different trails for species depending on if they're wearing shoes.
+/datum/species/proc/get_move_trail(var/mob/living/carbon/human/H)
+	if( H.shoes || ( H.wear_suit && (H.wear_suit.body_parts_covered & FEET) ) )
+		return /obj/effect/decal/cleanable/blood/tracks/footprints
+	else
+		return move_trail
+
+/datum/species/proc/update_skin(var/mob/living/carbon/human/H)
+	return
+
+/datum/species/proc/disarm_attackhand(var/mob/living/carbon/human/attacker, var/mob/living/carbon/human/target)
+	attacker.do_attack_animation(target)
+
+	if(target.w_uniform)
+		target.w_uniform.add_fingerprint(attacker)
+	var/obj/item/organ/external/affecting = target.get_organ(ran_zone(attacker.zone_sel.selecting))
+
+	var/list/holding = list(target.get_active_hand() = 40, target.get_inactive_hand() = 20)
+
+	//See if they have any guns that might go off
+	for(var/obj/item/weapon/gun/W in holding)
+		if(W && prob(holding[W]))
+			var/list/turfs = list()
+			for(var/turf/T in view())
+				turfs += T
+			if(turfs.len)
+				var/turf/shoot_to = pick(turfs)
+				target.visible_message("<span class='danger'>[target]'s [W] goes off during the struggle!</span>")
+				return W.afterattack(shoot_to,target)
+
+	var/randn = rand(1, 100)
+	if(!(species_flags & SPECIES_FLAG_NO_SLIP) && randn <= 25)
+		var/armor_check = target.run_armor_check(affecting, "melee")
+		target.apply_effect(3, WEAKEN, armor_check)
+		playsound(target.loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
+		if(armor_check < 100)
+			target.visible_message("<span class='danger'>[attacker] has pushed [target]!</span>")
+		else
+			target.visible_message("<span class='warning'>[attacker] attempted to push [target]!</span>")
+		return
+
+	if(randn <= 60)
+		//See about breaking grips or pulls
+		if(target.break_all_grabs(attacker))
+			playsound(target.loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
+			return
+
+		//Actually disarm them
+		for(var/obj/item/I in holding)
+			if(I)
+				target.drop_from_inventory(I)
+				target.visible_message("<span class='danger'>[attacker] has disarmed [target]!</span>")
+				playsound(target.loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
+				return
+
+	playsound(target.loc, 'sound/weapons/punchmiss.ogg', 25, 1, -1)
+	target.visible_message("<span class='danger'>[attacker] attempted to disarm \the [target]!</span>")
+
+/datum/species/proc/disfigure_msg(var/mob/living/carbon/human/H) //Used for determining the message a disfigured face has on examine. To add a unique message, just add this onto a specific species and change the "return" message.
+	var/datum/gender/T = gender_datums[H.get_gender()]
+	return "<span class='danger'>[T.His] face is horribly mangled!</span>\n"
+
+/datum/species/proc/max_skin_tone()
+	if(appearance_flags & HAS_SKIN_TONE_GRAV)
+		return 100
+	if(appearance_flags & HAS_SKIN_TONE_SPCR)
+		return 165
+	return 220

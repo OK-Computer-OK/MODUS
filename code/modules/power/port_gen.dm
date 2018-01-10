@@ -13,7 +13,7 @@
 	var/open = 0
 	var/recent_fault = 0
 	var/power_output = 1
-	flags = OBJ_CLIMBABLE
+	atom_flags = ATOM_FLAG_CLIMBABLE
 
 /obj/machinery/power/port_gen/proc/IsBroken()
 	return (stat & (BROKEN|EMPED))
@@ -426,6 +426,60 @@
 
 	explosion(src.loc, 3, 3, 5, 3)
 	qdel(src)
+
+/obj/machinery/power/port_gen/pacman/super/potato
+	name = "nuclear reactor"
+	desc = "PTTO-3, an industrial all-in-one nuclear power plant by Neo-Chernobyl GmbH. It uses uranium and vodka as a fuel source. Rated for 150 kW max safe output."
+	power_gen = 30000			//Watts output per power_output level
+	icon_state = "potato"
+	max_safe_output = 4
+	max_power_output = 8	//The maximum power setting without emagging.
+	temperature_gain = 80	//how much the temperature increases per power output level, in degrees per level
+	max_temperature = 450
+	time_per_sheet = 400
+	rad_power = 6
+	atom_flags = ATOM_FLAG_OPEN_CONTAINER
+	board_path = /obj/item/weapon/circuitboard/pacman/super/potato
+	anchored = 1
+
+/obj/machinery/power/port_gen/pacman/super/potato/New()
+	create_reagents(120)
+	..()
+
+/obj/machinery/power/port_gen/pacman/super/potato/examine(mob/user)
+	..()
+	to_chat(user, "Auxilary tank shows [reagents.total_volume]u of liquid in it.")
+
+/obj/machinery/power/port_gen/pacman/super/potato/UseFuel()
+	if(reagents.has_reagent("vodka"))
+		rad_power = 2
+		temperature_gain = 60
+		reagents.remove_any(1)
+		if(prob(2))
+			audible_message("<span class='notice'>[src] churns happily</span>")
+	else
+		rad_power = initial(rad_power)
+		temperature_gain = initial(temperature_gain)
+	..()
+
+/obj/machinery/power/port_gen/pacman/super/potato/update_icon()
+	if(..())
+		return 1
+	if(power_output > max_safe_output)
+		icon_state = "potatodanger"
+
+/obj/machinery/power/port_gen/pacman/super/potato/attackby(var/obj/item/O, var/mob/user)
+	if(istype(O, /obj/item/weapon/reagent_containers/))
+		var/obj/item/weapon/reagent_containers/R = O
+		if(R.standard_pour_into(src,user))
+			if(reagents.has_reagent("vodka"))
+				audible_message("<span class='notice'>[src] blips happily</span>")
+				playsound(get_turf(src),'sound/machines/synth_yes.ogg', 50, 0)
+			else
+				audible_message("<span class='warning'>[src] blips in disappointment</span>")
+				playsound(get_turf(src), 'sound/machines/synth_no.ogg', 50, 0)
+		return
+	..()
 
 /obj/machinery/power/port_gen/pacman/mrs
 	name = "M.R.S.P.A.C.M.A.N.-type Portable Generator"

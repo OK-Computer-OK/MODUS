@@ -32,7 +32,7 @@
 	var/last_sound = 0
 	active_power_usage = 2200	//the pneumatic pump power. 3 HP ~ 2200W
 	idle_power_usage = 100
-	flags = OBJ_CLIMBABLE
+	atom_flags = ATOM_FLAG_CLIMBABLE
 
 // create a new disposal
 // find the attached trunk (if present) and init gas resvr.
@@ -1593,8 +1593,8 @@
 	anchored = 1
 	var/active = 0
 	var/turf/target	// this will be where the output objects are 'thrown' to.
-	var/mode = DISPOSAL_OFF
-	flags = OBJ_CLIMBABLE
+	var/mode = 0
+	atom_flags = ATOM_FLAG_CLIMBABLE
 
 	New()
 		..()

@@ -35,6 +35,8 @@ atom/var/var/fingerprintslast = null
 	if(isAI(M)) return
 	if(!M || !M.key)
 		return
+	if(istype(tool) && (tool.item_flags & ITEM_FLAG_NO_PRINT))
+		return
 
 	add_hiddenprint(M)
 	add_fibers(M)
