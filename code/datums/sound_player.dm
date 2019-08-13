@@ -12,6 +12,9 @@ var/decl/sound_player/sound_player = new()
 	The line above is currently a lie. Will probably just have to enforce moderately short sound ranges.
 */
 
+/sound
+	var/ignore_vis = FALSE
+
 /decl/sound_player
 	var/channel_ceiling = 1024
 
@@ -25,15 +28,25 @@ var/decl/sound_player/sound_player = new()
 	..()
 	available_channels = new()
 	taken_channels = list()
-	source_id_uses = list()
+	sound_tokens_by_sound_id = list()
 
-/decl/sound_player/proc/PlayLoopingSound(var/atom/source, var/sound_id, var/sound, var/volume, var/range, var/falloff, var/prefer_mute, var/ignore_vis = FALSE)
-	var/channel = PrivGetChannel(sound_id)
-	if(!channel)
-		log_warning("All available sound channels are in active use.")
-		return
 
-	return new/datum/sound_token(source, sound_id, sound, volume, channel, range, falloff, prefer_mute, ignore_vis)
+//This can be called if either we're doing whole sound setup ourselves or it will be as part of from-file sound setup
+/decl/sound_player/proc/PlaySoundDatum(var/atom/source, var/sound_id, var/sound/sound, var/range, var/prefer_mute, var/ignore_vis = FALSE)
+	var/token_type = isnum(sound.environment) ? /datum/sound_token : /datum/sound_token/static_environment
+	return new token_type(source, sound_id, sound, range, prefer_mute, ignore_vis)
+
+/decl/sound_player/proc/PlayLoopingSound(var/atom/source, var/sound_id, var/sound, var/volume, var/range, var/falloff = 1, var/echo, var/frequency, var/prefer_mute, var/ignore_vis = FALSE)
+	var/sound/S = istype(sound, /sound) ? sound : new(sound)
+	S.environment = 0 // Ensures a 3D effect even if x/y offset happens to be 0 the first time it's played
+	S.volume  = volume
+	S.falloff = falloff
+	S.echo = echo
+	S.frequency = frequency
+	S.repeat = TRUE
+	S.ignore_vis = ignore_vis
+
+	return PlaySoundDatum(source, sound_id, S, range, prefer_mute, ignore_vis)
 
 /decl/sound_player/proc/PrivStopSound(var/datum/sound_token/sound_token)
 	var/channel = sound_token.channel
@@ -84,9 +97,32 @@ var/decl/sound_player/sound_player = new()
 	var/datum/proximity_trigger/square/proxy_listener
 	var/list/can_be_heard_from
 	var/ignore_vis = FALSE
-
-/datum/sound_token/New(var/atom/source, var/sound_id, var/sound, var/volume, var/channel, var/range = 4, var/falloff = 1, var/prefer_mute = FALSE, var/ignore_vis = FALSE)
+/datum/sound_token/New(var/atom/source, var/sound_id, var/sound/sound, var/range = 4, var/prefer_mute = FALSE, var/ignore_vis = FALSE)
 	..()
+	if(!istype(source))
+		CRASH("Invalid sound source: [log_info_line(source)]")
+	if(!istype(sound))
+		CRASH("Invalid sound: [log_info_line(sound)]")
+	if(sound.repeat && !sound_id)
+		CRASH("No sound id given")
+	if(!PrivIsValidEnvironment(sound.environment))
+		CRASH("Invalid sound environment: [log_info_line(sound.environment)]")
+
+	src.prefer_mute = prefer_mute
+	src.range       = range
+	src.source      = source
+	src.sound       = sound
+	src.sound_id    = sound_id
+	src.ignore_vis  = ignore_vis
+	to_world("Ignore vis is [ignore_vis]")
+
+	if(sound.repeat) // Non-looping sounds may not reserve a sound channel due to the risk of not hearing when someone forgets to stop the token
+		var/channel = GLOB.sound_player.PrivGetChannel(src) //Attempt to find a channel
+		if(!isnum(channel))
+			CRASH("All available sound channels are in active use.")
+		sound.channel = channel
+	else
+		sound.channel = 0
 	listeners = list()
 	listener_status = list()
 
@@ -152,7 +188,6 @@ datum/sound_token/proc/Mute()
 
 	can_be_heard_from = current_turfs
 	var/current_listeners = all_hearers(source, range, ignore_vis)
-
 	var/former_listeners = listeners - current_listeners
 	var/new_listeners = current_listeners - listeners
 
@@ -208,7 +243,6 @@ datum/sound_token/proc/PrivAddListener(var/atom/listener)
 	var/turf/listener_turf = get_turf(listener)
 
 	var/distance = get_dist(source_turf, listener_turf)
-
 	if(!listener_turf || (distance > range) || (!(listener_turf in can_be_heard_from) && !ignore_vis) )
 		if(prefer_mute)
 			listener_status[listener] |= SOUND_MUTE
