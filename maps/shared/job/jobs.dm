@@ -125,7 +125,7 @@
 
 
 /datum/job/hop
-	title = "Head Of Personell"
+	title = "Head Of Personnel"
 	supervisors = "The Captain"
 	minimal_player_age = 31
 	economic_modifier = 5
@@ -140,7 +140,7 @@
 		H.add_stats(rand(6,9), rand(9,11), rand(10,12))
 
 /datum/job/employe
-	title = "Employe Administrator" //hops assistant basically
+	title = "Employee Administrator" //hops assistant basically
 	supervisors = "The HoP"
 	minimal_player_age = 21
 	economic_modifier = 8
@@ -230,7 +230,7 @@
 			access_chemistry, access_virology, access_cmo, access_surgery, access_maint_tunnels)
 
 /datum/job/hos
-	title = "Head Of Security"
+	title = "Head of Security"
 	supervisors = "the Captain"
 	department_flag = SEC
 	faction = "Station"
@@ -419,7 +419,7 @@
 
 /datum/job/jr_upkeep
 	selection_color = "#633d63"
-	title = "Junior Engineers"
+	title = "Junior Engineer"
 	supervisors = "the engineers"
 	minimal_player_age = 16
 	economic_modifier = 2
