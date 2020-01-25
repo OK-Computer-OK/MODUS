@@ -348,3 +348,5 @@ var/datum/controller/subsystem/garbage_collector/SSgarbage
 		SearchVar(readglobal(global_var))
 #undef SearchVar
 #endif
+
+// honk
