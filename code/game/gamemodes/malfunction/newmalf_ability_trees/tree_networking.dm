@@ -70,7 +70,7 @@
 	to_chat(user, "Beginning APC system override...")
 	sleep(150)
 	to_chat(user, "APC hack completed. Uploading modified operation software..")
-	sleep(1000)
+	sleep(100)
 	to_chat(user, "Restarting APC to apply changes..")
 	sleep(50)
 	if(A)
