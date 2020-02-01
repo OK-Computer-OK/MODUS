@@ -37,7 +37,7 @@
 		return 0
 
     var/area/area = get_area(src)
-    if(direction == UP && area.has_gravity())
+    if(direction == UP && area.has_gravity() && !can_overcome_gravity())
         to_chat(src, "<span class='warning'>Gravity stops you from moving upward.</span>")
         return 0
 			elseif
@@ -67,6 +67,28 @@
 
 /mob/proc/can_ztravel()
 	return 0
+
+/mob/proc/can_overcome_gravity
+	return 0
+
+/mob/living/carbon/human/can_overcome_gravity()
+    //First do species check
+    if(species && species.can_overcome_gravity(src))
+        return 1
+    else
+        for(var/atom/a in src.loc)
+            if(a.atom_flags & ATOM_FLAG_CLIMBABLE)
+                return 1
+
+        //Last check, list of items that could plausibly be used to climb but aren't climbable themselves
+        var/list/objects_to_stand_on = list(
+                /obj/item/weapon/stool,
+                /obj/structure/bed,
+            )
+        for(var/type in objects_to_stand_on)
+            if(locate(type) in src.loc)
+                return 1
+    return 0
 
 /mob/observer/can_ztravel()
 	return 1
