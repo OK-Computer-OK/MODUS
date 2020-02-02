@@ -632,6 +632,10 @@ macro "hotkeymode"
 		command = "holster"
 		is-disabled = false
 	elem 
+		name = "C"
+		command = "toggle-combat-mode"
+		is-disabled = false
+	elem 
 		name = "J"
 		command = "toggle-gun-mode"
 		is-disabled = false
@@ -709,6 +713,10 @@ macro "hotkeymode"
 		is-disabled = false
 	elem 
 		name = "F2"
+		command = "ooc"
+		is-disabled = false
+	elem 
+		name = "O"
 		command = "ooc"
 		is-disabled = false
 	elem 
@@ -907,6 +915,10 @@ macro "borgmacro"
 		is-disabled = false
 	elem 
 		name = "F2"
+		command = "ooc"
+		is-disabled = false
+	elem 
+		name = "O"
 		command = "ooc"
 		is-disabled = false
 	elem 
@@ -2140,6 +2152,34 @@ window "rpane"
 		text = "Wiki"
 		image = ""
 		command = "wiki"
+		is-flat = false
+		stretch = false
+		is-checked = false
+		group = "rpanemode"
+		button-type = pushbutton
+	elem "discordb"
+		type = BUTTON
+		pos = 152,0
+		size = 60x16
+		anchor1 = none
+		anchor2 = none
+		font-family = ""
+		font-size = 0
+		font-style = ""
+		text-color = #000000
+		background-color = none
+		is-visible = true
+		is-disabled = false
+		is-transparent = false
+		is-default = false
+		border = none
+		drop-zone = false
+		right-click = false
+		saved-params = "is-checked"
+		on-size = ""
+		text = "Discord"
+		image = ""
+		command = "discord"
 		is-flat = false
 		stretch = false
 		is-checked = false
