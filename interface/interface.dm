@@ -23,7 +23,7 @@
 		to_chat(src, "<span class='warning'>The forum URL is not set in the server configuration.</span>")
 	return
 
-/client/verb/discord()
+/*/client/verb/discord()
 	set name = "discord"
 	set desc = "Join the discord."
 	set hidden = 1
@@ -33,7 +33,8 @@
 		src << link(config.discordurl)
 	else
 		to_chat(src, "<span class='warning'>The discord link is not set in the server configuration.</span>")
-	return
+	return*/
+//commented out for now
 
 #define RULES_FILE "config/rules.html"
 /client/verb/rules()
