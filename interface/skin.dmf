@@ -633,7 +633,11 @@ macro "hotkeymode"
 		is-disabled = false
 	elem 
 		name = "C"
-		command = "toggle-combat-mode"
+		command = "toggle_combat_mode"
+		is-disabled = false
+	elem 
+		name = "D"
+		command = "toggle_dodge_parry"
 		is-disabled = false
 	elem 
 		name = "J"
