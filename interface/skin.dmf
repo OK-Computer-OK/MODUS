@@ -632,7 +632,7 @@ macro "hotkeymode"
 		command = "holster"
 		is-disabled = false
 	elem 
-		name = "C"
+		name = "SPACE"
 		command = "toggle_combat_mode"
 		is-disabled = false
 	elem 
@@ -640,7 +640,7 @@ macro "hotkeymode"
 		command = "toggle_dodge_parry"
 		is-disabled = false
 	elem 
-		name = "T"
+		name = "Y"
 		command = "surrender"
 		is-disabled = false
 	elem 
