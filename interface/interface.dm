@@ -75,8 +75,9 @@ Hotkey-Mode: (hotkey-mode must be on)
 \tr = throw
 \tt = say
 \to = ooc
-\tc = toggle_combat_mode
+\tspace = toggle_combat_mode
 \tv = toggle_dodge_parry
+\ty = surrender
 \t5 = emote
 \tx = swap-hand
 \tz = activate held object (or y)
