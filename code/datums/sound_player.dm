@@ -106,7 +106,6 @@ GLOBAL_DATUM_INIT(sound_player, /decl/sound_player, new)
 	src.source      = source
 	src.sound       = sound
 	src.sound_id    = sound_id
-	src.ignore_vis  = ignore_vis
 	to_world("Ignore vis is [ignore_vis]")
 
 	if(sound.repeat) // Non-looping sounds may not reserve a sound channel due to the risk of not hearing when someone forgets to stop the token
